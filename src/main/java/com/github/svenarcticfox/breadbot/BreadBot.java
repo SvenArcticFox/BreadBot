@@ -9,6 +9,8 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import javax.security.auth.login.LoginException;
 
+import java.util.Random;
+
 public class BreadBot extends ListenerAdapter
 {
     public static void main(String[] args)
@@ -44,18 +46,11 @@ public class BreadBot extends ListenerAdapter
     @Override
     public void onMessageReceived(MessageReceivedEvent event)
     {
-            JDA jda = event.getJDA();
-            long responseNumber = event.getResponseNumber();
-
-
             User author = event.getAuthor();
             Message message = event.getMessage();
             MessageChannel channel = event.getChannel();
 
-
             String msg = message.getContentDisplay();
-
-
 
             boolean bot = author.isBot();
 
@@ -75,8 +70,6 @@ public class BreadBot extends ListenerAdapter
             }
             else if (event.isFromType(ChannelType.PRIVATE))
             {
-                PrivateChannel privateChannel = event.getPrivateChannel();
-                privateChannel.sendMessage("Please use this bot in a server!").queue();
                 System.out.printf("[PRIVATE]<%s>: %s\n", author.getName(), msg);
             }
 
@@ -86,8 +79,13 @@ public class BreadBot extends ListenerAdapter
             {
                 try
                 {
+                    Random random = new Random();
+                    int randomInt = random.nextInt(50);
                     message.delete().queue();
-                    channel.sendMessage(":bread:").queue();
+                    if (randomInt == 21)
+                        channel.sendMessage(":french_bread:");
+                    else
+                        channel.sendMessage(":bread:").queue();
                 }
                 catch (PermissionException e)
                 {
@@ -97,6 +95,4 @@ public class BreadBot extends ListenerAdapter
             }
         }
     }
-
-
 }
