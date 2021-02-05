@@ -82,7 +82,7 @@ public class BreadBot extends ListenerAdapter
 
         if (message.isFromGuild() && !bot)
         {
-            if (!(msg.contains("\uD83C\uDF5E") || (msg.contains("\uD83E\uDD56"))))
+            if (!(msg.equals("\uD83C\uDF5E") || (msg.equals("\uD83E\uDD56"))))
             {
                 try
                 {
