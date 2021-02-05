@@ -2,25 +2,35 @@ package com.github.svenarcticfox.breadbot;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.PermissionException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import javax.security.auth.login.LoginException;
-import java.util.List;
 
 public class BreadBot extends ListenerAdapter
 {
     public static void main(String[] args)
     {
-        String token = args[0];
+        String token = null;
+        try
+        {
+            token = args[0];
+        }
+        catch (ArrayIndexOutOfBoundsException e)
+        {
+            System.out.println("Enter the token as an argument!");
+            e.printStackTrace();
+            System.exit(-1);
+        }
+
 
         try
         {
             JDA jda = JDABuilder.createDefault(token)
                     .addEventListeners(new BreadBot())
+                    .setActivity(Activity.playing("with bread"))
                     .build();
             jda.awaitReady();
             System.out.println("Finished Building JDA");
@@ -37,13 +47,15 @@ public class BreadBot extends ListenerAdapter
             JDA jda = event.getJDA();
             long responseNumber = event.getResponseNumber();
 
+
             User author = event.getAuthor();
             Message message = event.getMessage();
             MessageChannel channel = event.getChannel();
 
 
             String msg = message.getContentDisplay();
-            System.out.println(msg);
+
+
 
             boolean bot = author.isBot();
 
@@ -64,19 +76,18 @@ public class BreadBot extends ListenerAdapter
             else if (event.isFromType(ChannelType.PRIVATE))
             {
                 PrivateChannel privateChannel = event.getPrivateChannel();
-
-                System.out.printf("[PRIV]<%s>: %s\n", author.getName(), msg);
+                privateChannel.sendMessage("Please use this bot in a server!").queue();
+                System.out.printf("[PRIVATE]<%s>: %s\n", author.getName(), msg);
             }
 
-
-        if (bot == false)
+        if (message.isFromGuild() && !bot)
         {
-            if (!msg.equals(":bread:") || (!msg.equals(":french_bread:") || !msg.equals(":baguette_bread:")))
+            if (!(msg.contains("\uD83C\uDF5E") || (msg.contains("\uD83E\uDD56"))))
             {
                 try
                 {
                     message.delete().queue();
-                    channel.sendMessage("Bread ONLY! :bread:").queue();
+                    channel.sendMessage(":bread:").queue();
                 }
                 catch (PermissionException e)
                 {
@@ -85,7 +96,7 @@ public class BreadBot extends ListenerAdapter
 
             }
         }
-
     }
+
 
 }
